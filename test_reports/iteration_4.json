@@ -1,0 +1,25 @@
+{
+  "summary": "Frontend-only verification of the 'Omzet per Channel' precision fix on both Penjualan tab (Analytics > Penjualan) and Laporan Penjualan (More > LAPORAN > Penjualan). All four channels (Shopee, WhatsApp, Facebook, Toko Fisik) show non-empty rupiah values and non-empty percentages on the Penjualan tab; WhatsApp specifically shows 'Rp318 rb' and '10%' (was previously collapsing to empty/0 under the old whole-million toJt rounding). Laporan Penjualan shows the same underlying amounts in full rupiah format. Values are consistent across both screens for Sep 2026 (the default/latest month).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Penjualan > Omzet per Channel", "issues": ["Rounded percentages sum to 101% (29+10+27+35) due to independent Math.round on each channel. Cosmetic-only; every channel still shows a correct, non-zero share. Consider largest-remainder rounding if 100% total is required."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json", "/app/test_reports/ui/penjualan_channels.jpeg", "/app/test_reports/ui/laporan_penjualan_channels.jpeg"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "penjualan.tsx uses `sales.channelTotal` guarded by `|| 1` in calc.ts (channelTotal defaults to 1 when all channels are zero) — safe from division-by-zero.",
+    "compactRupiah in src/data/time.ts correctly renders sub-million values as 'Rp<n> rb' and >=1M as 'RpX,Y Jt', matching the design intent."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (not requested)", "frontend": "100%"},
+  "seed_data_creation": "None; app uses local seed data (Ummu Abdullah Shop, Sep 2026 as latest month with one WhatsApp order ord-2026-09-3 = 318,000).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Verified values (Sep 2026): Shopee 920,000 / WhatsApp 318,000 / Facebook 853,000 / Toko Fisik 1,124,000 (total 3,215,000). Penjualan tab renders these via compactRupiah -> 'Rp920 rb / Rp318 rb / Rp853 rb / Rp1,1 Jt'; Laporan Penjualan renders formatRupiah -> 'Rp920.000 / Rp318.000 / Rp853.000 / Rp1.124.000'. Navigation: bottom nav 'Analytics' opens Pelanggan by default; use top tab 'Penjualan' (or /penjualan route). Laporan is reached via bottom nav 'More' -> LAPORAN section -> 'Penjualan' (label is just 'Penjualan', not 'Laporan Penjualan'; screen title is 'Laporan Penjualan').",
+  "rca_of_issue": "Previous behavior: channel omzet was passed through toJt (Math.round(value/1_000_000)) which collapsed WhatsApp's 318,000 to 0 Jt and displayed empty/0. Fix: salesAnalytics now returns raw rupiah `omzet` per channel; Penjualan uses compactRupiah(channel.omzet) for the value and Math.round((channel.omzet / sales.channelTotal) * 100) for the percentage. Verified: WhatsApp row is populated and consistent with Laporan Penjualan."
+}

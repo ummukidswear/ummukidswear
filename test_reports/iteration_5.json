@@ -1,0 +1,40 @@
+{
+  "summary": "Frontend-only testing of new 'Reset Data' feature. Menu placement, confirmation flow, reset execution, business-config preservation and audit trail all verified end-to-end via Playwright + direct localStorage inspection. The reset itself works exactly to spec: operational collections (orders, products, customers, purchases, expenses, suppliers, channels, accounts, adjustments, targets, actionStatus) become empty while rules(8)/params/thresholds/settings are preserved and audit contains exactly one 'Reset · Reset data ke kondisi kosong' entry. Reports (Laporan Penjualan/Keuangan/Stok), More > Business Rules, Parameter, Threshold, Pengaturan and Analytics/Penjualan all render with empty data (0 order, Rp0). Found one dev-mode issue: SegmentDonut in src/components/analytics-charts.tsx:141 divides by total=0 when all segmentation counts are 0, producing NaN strokeDashoffset. Expo dev overlay shows a Console Error toast that intercepts taps and can block subsequent navigation until dismissed. In production build this would only be a silent warning, but the UX in dev is broken. Cast to 0 when total===0.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "SegmentDonut / analytics-charts",
+        "issue": "When all customer-segment counts are 0 (post-reset), (segment.count / total) evaluates to NaN and is passed to <Circle strokeDashoffset>. Expo dev overlay 'Received NaN for the `strokeDashoffset` attribute' pops up on Analytics > Pelanggan and can block navigation. Reference: /app/frontend/src/components/analytics-charts.tsx:141. Fix: guard `const length = total > 0 ? (segment.count / total) * circumference : 0;`",
+        "testID": "n/a",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/ui/analytics_empty.jpg",
+    "/app/test_reports/ui/home_empty.jpg",
+    "/app/test_reports/ui/alert_empty.jpg",
+    "/app/test_reports/ui/reset_done.jpg",
+    "/app/test_reports/ui/audit_after_reset.jpg"
+  ],
+  "action_items": [
+    "In src/components/analytics-charts.tsx (SegmentDonut and any similar donut/segment calcs), guard division by total when total === 0 so strokeDashoffset never receives NaN. This eliminates the Console Error overlay on Analytics > Pelanggan when data is empty after Reset Data."
+  ],
+  "critical_code_review_comments": [
+    "resetData() in store.tsx correctly preserves params/thresholds/rules/settings and only clears operational collections + actionStatus, replacing audit with a single Reset entry — matches PRD.",
+    "ConfirmSheet has a single global testID='confirm-button' shared by all destructive confirmations (also used by Backup & Restore reset-seed). Fine here because both flows use the same sheet, but keep in mind if two ConfirmSheets could ever mount together.",
+    "Reset Data screen has no dedicated testID on the total-records counter; only visible via text 'X data operasional tersimpan saat ini'. Adding testID='reset-data-count' would harden future tests.",
+    "AsyncStorage/localStorage write is fire-and-forget with 3s bail-out timer — verified reset persists correctly to localStorage key 'bos.data.v1'."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "95%"},
+  "seed_data_creation": "No seed data created. Test relied on the default createSeedData() (57 operational records) and consumed it via the Reset flow inside a single browser session.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Reset Data feature verified: menu placement under SISTEM below Audit Log, ConfirmSheet requires confirmation, resetData() clears operational data & preserves business config, and localStorage 'bos.data.v1' reflects the reset. Only remaining action is the NaN guard in SegmentDonut. Because each Playwright session starts with fresh localStorage, chain the reset AND downstream verifications in the SAME session or pre-seed localStorage via page.evaluate before nav.",
+  "rca_of_issue": "SegmentDonut donut chart error: total = sum(segment.count) = 0 after reset; the map does `segment.count / total` -> NaN -> passed to Circle.strokeDashoffset. React-native-svg forwards NaN to the DOM which triggers React's dev warning and Expo dev overlay. Repro: complete Reset Data flow, then open Analytics tab, tap Pelanggan sub-tab. Mitigation: guard with `total > 0 ? (segment.count / total) * circumference : 0` (and set dash to `0 ${circumference}` when total is 0)."
+}

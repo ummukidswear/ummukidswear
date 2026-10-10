@@ -1,0 +1,43 @@
+{
+  "summary": "Frontend-only verification of the 8 targeted BOS dashboard fixes (Ummu Abdullah Shop, Expo web, mobile 390x844). All 8 fixes pass end-to-end. FIX1: cold-load '/' redirects to /penjualan with 'KPI Penjualan' visible; nav-analytics from Home/Alert also lands on Penjualan; tab switching between Penjualan/Produk/Pelanggan/Keuangan works. FIX2: More>Order add-form exposes testID date-field-tanggal (not a text box); tapping opens a month calendar sheet with date-prev-month/date-next-month arrows and date-day-1..30 cells; picking day 11 displays '11-09-2026' in the field and Simpan saves (internal YYYY-MM-DD confirmed by seed rows showing '2026-09-25' format). FIX3: Analytics>Pelanggan Sebaran lists 6 dynamic wilayah rows sorted desc [Makassar=2, Bone=1, Gowa=1, Maros=1, Pangkep=1, Parepare=1]; region-takalar and region-lainnya not rendered (count 0). FIX4: Produk 'Tren Nilai Produk' SVG values across 6 months are ['12.6Jt','12.6Jt','12.6Jt','13.1Jt','12.9Jt','11.8Jt'] - not all identical, Sep (11.8Jt) differs from prior months, 1-decimal precision present. FIX5: availability-habis opens /detail?type=product-availability&value=Habis listing 'Gula Aren Cair'; turnover-fast-moving opens /detail with matching product row. FIX6: Home header shows testID home-alert-bell with numeric badge '5' matching nav-alert badge '5'; bell tap navigates to /alert; Penjualan/Produk/Pelanggan/Keuangan headers have zero bells (verified count=0 on Penjualan and Keuangan). FIX7: All 5 segment testIDs (segment-pelanggan-loyal/berulang/baru/pasif/tidak-aktif) and all 6 region testIDs are Pressable; region-makassar opens /detail with 2 rows containing Ibu Aisyah + Ibu Hasnah; segment-pelanggan-loyal opens /detail with the matching customer list. FIX8: All 4 KPI cards (kpi-kas-masuk/kas-keluar/pendapatan/biaya) open /detail with proper totals ('Total kas masuk' 5 rows, 'Total kas keluar' 4 rows purchases+expenses+channel-fee, 'Total pendapatan' 5 sale orders, 'Total biaya' 4 rows including HPP+channel-fee+expenses). Zero JavaScript pageerrors captured across all flows. No deprecated Expo packages (expo-av/expo-barcode-scanner/expo-background-fetch) detected. No SafeAreaView deprecation issues. Text is wrapped in <Text> throughout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Analytics > Produk > Tren Nilai Produk", "issues": ["SVG axis labels render decimal with dot ('12.6Jt') instead of the Indonesian comma format ('12,6Jt') used everywhere else in the app (region % '29%', segmentPercent '14,3%'). Minor cosmetic inconsistency, not a blocker. Reference: /app/frontend/src/components/analytics-charts.tsx (formatValue passed from produk.tsx L92)."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/ui/i8_penjualan.jpeg",
+    "/app/test_reports/ui/i8_home.jpeg",
+    "/app/test_reports/ui/i8_pelanggan.jpeg",
+    "/app/test_reports/ui/i8_makassar.jpeg",
+    "/app/test_reports/ui/i8_produk.jpeg",
+    "/app/test_reports/ui/i8_habis.jpeg",
+    "/app/test_reports/ui/i8_keuangan.jpeg",
+    "/app/test_reports/ui/i8_kasmasuk.jpeg",
+    "/app/test_reports/ui/i8_order_add.jpeg",
+    "/app/test_reports/ui/i8_calendar.jpeg",
+    "/app/test_reports/ui/i8_after_pick.jpeg"
+  ],
+  "action_items": [
+    "OPTIONAL/COSMETIC: Change formatValue in produk.tsx L92 from `${value}Jt` to `${String(value).replace('.', ',')}Jt` so the Tren Nilai Produk axis matches the Indonesian decimal convention used elsewhere. Not required by any of the 8 fixes."
+  ],
+  "critical_code_review_comments": [
+    "app/detail.tsx (125 lines) is a clean, single-source-of-truth drill-down: reads {type,value,month} params and derives all lists/totals from calc.ts (customerStatus/productStatus/monthMetrics). No numbers stored locally - detail always matches the KPI/segment it was opened from. Good.",
+    "app/pelanggan.tsx correctly uses Pressable with testID={`region-${name.toLowerCase()}`} and testID={`segment-${label.toLowerCase().replaceAll(' ', '-')}`}, and routes to /detail with the correct type/value/month params.",
+    "app/home.tsx L112 wires home-alert-bell to router.push('/alert') and shows the numeric badge via evaluateAlerts(data, latestMonthKey(data)).length - correctly hides when count === 0.",
+    "index.tsx is a proper Redirect->/penjualan so nav-analytics (router.replace('/penjualan')) and cold-load both land on Penjualan.",
+    "entity-list.tsx + ui-kit.tsx DateField pattern: stored value stays YYYY-MM-DD, rendered as DD-MM-YYYY via toDisplayDate - confirmed working via the Order add form.",
+    "No deprecated Expo packages, no HTML tags in RN components, all styles via StyleSheet.create() (makeStyles factory)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% (8/8 fixes pass)"},
+  "seed_data_creation": "Used the default createSeedData() seed (12 products, 7 customers across 7 cities, 3 months Jul/Aug/Sep 2026). Did NOT need to run More>Backup&Restore>reset-seed - the seed was already intact in the preview session.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 8 fixes for the BOS dashboard are verified. Playwright drivers: cold-load '/' -> expect URL '/penjualan'; nav-analytics from Home/Alert/Action/More -> /penjualan; date-field-tanggal opens calendar Sheet with testIDs date-prev-month, date-next-month, date-day-{1..N}; picking day sets displayed 'DD-MM-YYYY' and stores 'YYYY-MM-DD'; region-* / segment-* / availability-* / turnover-* / kpi-kas-masuk/kas-keluar/pendapatan/biaya all route to /detail with {type,value,month} params. Home bell testID = home-alert-bell (badge count from evaluateAlerts). No bells on any Analytics tab.",
+  "rca_of_issue": "No bugs. Only a cosmetic decimal-separator inconsistency in produk trend axis labels ('12.6Jt' vs the '12,6Jt' Indonesian convention). Everything else in the review request is implemented correctly."
+}

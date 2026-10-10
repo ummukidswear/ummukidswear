@@ -1,0 +1,4 @@
+SKU,Nama Produk,Harga Jual Master,HPP Awal / Unit,Stok Awal (setup awal saja),ROP (batas stok menipis),Target Gross Margin (%),Supplier Utama,Status
+BARU-001,Teh Melati 25s,28000,17000,40,15,25,CV Sumber Rezeki,Aktif
+KOP-250,Kopi Duplikat,90000,55000,10,5,20,CV Sumber Rezeki,Aktif
+BARU-002,Gula Semut 500g,35000,abc,30,10,20,Supplier Tidak Ada,Aktif

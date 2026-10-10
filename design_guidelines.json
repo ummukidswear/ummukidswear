@@ -1,0 +1,105 @@
+{
+  "app_name": "BOS Analytics Pelanggan",
+  "personality": "7 Dark-First Utility DARK",
+  "personality_one_liner": "Command-center active customer intelligence with high-contrast cyan/teal accents and razor-sharp clarity.",
+  "color": {
+    "surface": "#0E1217",
+    "onSurface": "#F0F4F8",
+    "surfaceSecondary": "#171D26",
+    "onSurfaceSecondary": "#C5D0DE",
+    "surfaceTertiary": "#212A38",
+    "onSurfaceTertiary": "#8C9BB0",
+    "surfaceInverse": "#FFFFFF",
+    "onSurfaceInverse": "#0E1217",
+    "brand": "#00E5FF",
+    "brandPrimary": "#00E5FF",
+    "onBrandPrimary": "#0E1217",
+    "brandSecondary": "#00B8D4",
+    "onBrandSecondary": "#FFFFFF",
+    "brandTertiary": "#1A3644",
+    "onBrandTertiary": "#00E5FF",
+    "success": "#00E676",
+    "onSuccess": "#0E1217",
+    "warning": "#FFEA00",
+    "onWarning": "#0E1217",
+    "error": "#FF3D00",
+    "onError": "#FFFFFF",
+    "info": "#00B8D4",
+    "onInfo": "#FFFFFF",
+    "border": "#212A38",
+    "borderStrong": "#00E5FF",
+    "divider": "#1C2532",
+    "muted": "#8C9BB0",
+    "onBrand": "#0E1217"
+  },
+  "typography": {
+    "displayFontFamily": "BarlowCondensed_600SemiBold",
+    "textFontFamily": "Inter_400Regular",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Maintain tight, operational spacing with card padding 16px and vertical stack gaps 12px.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": 0,
+  "navigation": "bottom_tabs",
+  "icon_set": "MaterialCommunityIcons",
+  "glassmorphism": {
+    "enabled": false,
+    "do's": [
+      "Use crisp solid tonal cards with 1px borders (#212A38) for command-center data clarity"
+    ],
+    "dont's": [
+      "Avoid heavy blur or glass overlays that reduce glanceability of active customer metrics"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-blur",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "AnalyticsPelanggan",
+      "purpose": "Provide comprehensive active customer intelligence, segmentation, regional distribution, and automated growth insights.",
+      "states": {
+        "loading": "Centered cyan activity indicator on deep obsidian surface",
+        "empty": "No customer analytics data available for selected period",
+        "error": "Failed to sync customer analytics. Tap Retry."
+      },
+      "layout": "Header -> Dynamic Month & Period Filter Bar -> 4 KPI Summary Cards -> Rolling 6-Month Active Customer Trend Chart -> Customer Segmentation Donut & Legend -> Regional Active Customer Distribution Bars -> Generated Customer Intelligence Insights -> Fixed Bottom Navigation."
+    }
+  ],
+  "images": {
+    "analytics_bg": {
+      "url": "https://images.unsplash.com/photo-1671488618997-dfab26d9d48e?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "alt": "Dark mode abstract data background"
+    }
+  },
+  "instructions_to_main_agent": "Refine Analytics -> Pelanggan tab to match the target premium dark mobile BOS aesthetic (dark navy background #0E1217, lighter navy cards #171D26, cyan/teal accents #00E5FF, semantic green/yellow/orange/red/purple colors). Preserve all existing data structures, calculations, dynamic month selection, KPI calculations, rolling trend, customer segmentation, regional distribution, automated insights, and fixed bottom navigation. Xiaomi 12 Lite portrait (1080x2400) optimized."
+}

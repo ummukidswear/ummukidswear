@@ -1,0 +1,22 @@
+{
+  "summary": "All 3 fixes verified on Sep 2026 seed via mobile viewport (390x844). FIX1: Sebaran Pelanggan renders 6 wilayah in a 2-column layout sorted desc (Makassar=2 first at x=24 top-left, Parepare=1 top-right, Bone/Gowa/Maros/Pangkep filling left column). No 'region-daerah-lainnya' row (correct with 6 <=9 wilayah). region-makassar drilldown -> 'Wilayah Makassar · 2 pelanggan' (Ibu Aisyah, Ibu Hasnah), region-bone -> 'Wilayah Bone · 1 pelanggan'. FIX2: Home Business Health Score - all 5 factor rows (margin, pencapaian-target, kesehatan-stok, saldo-kas, repeat-rate) tappable and route to correct /detail (Laba Bersih Rp795.175, Pendapatan Rp3.215.000, product-availability Normal, Kas Masuk Rp3.215.000, Pelanggan Berulang 2 pelanggan). KPI Utama - all 8 tiles (kpi-omzet, kpi-laba, kpi-order, kpi-aov, kpi-pelanggan, kpi-qty, kpi-kas, kpi-stok) tappable, e.g. kpi-order -> Total Order 5 order list, kpi-qty -> Qty Terjual 56 pcs product list, kpi-stok -> Nilai Stok Rp11.806.000 list of 12 produk, kpi-pelanggan -> Pelanggan Aktif 5 pelanggan. Insight Utama - 4 rows discovered (insight-pelanggan, insight-omzet, insight-margin, insight-target), each drills down to the correct /detail. FIX3: Analytics > Penjualan - 4 KPI cards tappable (kpi-total-order -> 5 order, kpi-aov -> Rp643.000, kpi-qty -> 56 pcs; kpi-omzet visible in DOM and drill-down works on Home). Omzet per Channel shows only the 4 channels with sales in Sep 2026 (Shopee Rp920rb 29%, WhatsApp Rp318rb 10%, Facebook Rp853rb 27%, Toko Fisik Rp1,1Jt 35% - sums to Rp3.215.000 matching KPI Omzet). Each channel row drills to sales-channel /detail with 'Total omzet channel' matching (e.g. channel-shopee -> Shopee · 1 order · Total omzet channel Rp920.000, channel-toko-fisik -> 2 order · Rp1.124.000). No crashes, no red screens, values dynamic from calc layer.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/ui/iteration_9/00_home.jpeg", "/app/test_reports/ui/iteration_9/10_penjualan.jpeg", "/app/test_reports/ui/iteration_9/20_pelanggan.jpeg"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Minor: pelanggan.tsx computes displayRegions with slice(9) but top9 was already sliced to 9 and appended 'Daerah Lainnya' - logic correct. Only exercised with the 6-city seed (Daerah Lainnya path verified absent, but the >9 wilayah branch was not exercised end-to-end since seed <=9)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100%"},
+  "seed_data_creation": "None - used existing Sep 2026 seed (12 produk, 7 pelanggan, 5 orders selesai, 4 channels used).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 3 fixes pass with existing seed. To fully exercise FIX1 'Daerah Lainnya' branch, tester needs to add customers so >9 distinct cities exist (via More > Pelanggan > add), then verify a rank-10 'Daerah Lainnya' row appears in right column and its /detail lists the remaining wilayah with clickable rows to each. Insight testIDs currently rendered are: insight-pelanggan, insight-omzet, insight-margin, insight-target (4 rows) - the requested count of 4 is met.",
+  "rca_of_issue": "N/A - no bugs found in this iteration."
+}

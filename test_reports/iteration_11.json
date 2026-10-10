@@ -1,0 +1,25 @@
+{
+  "summary": "Full Profit Engine (Part 4) + Modul Biaya Channel (req 24) verified on Expo web preview (mobile 390x844). All 7 requested flows pass. (1) /more/laba renders 'Ringkasan Laba · Sep 2026' with every required row (Nilai penjualan aktual Rp3.247.000, − Biaya channel Rp128.725, − Packaging Rp36.000, − Pajak 0,5% Rp16.235, − HPP (rata-rata bergerak) Rp2.079.500, Laba transaksi Rp986.540, − Biaya operasional Rp250.000, Laba bersih bisnis Rp736.540) and 'Rincian per order' with per-item formula 'Jual … − channel … − pack … − pajak … − HPP … = …' plus 'estimasi' tag on seed orders. (2) /more/biaya-channel lists seeded costs showing 'Default channel (semua SKU)' vs 'Override SKU: Kopi Arabika 250g'; Tambah opens sheet with Channel, Product/SKU (searchable + 'Default (semua SKU)'), Komponen Biaya, Tipe (%/Rp), Nilai, Basis Perhitungan, Tanggal Berlaku, Status. (3) /more/harga-channel lists 'Kopi Arabika 250g · Shopee · Rp89.000'; add form has Produk/Channel/Harga Jual Channel. (4) /more/order add sheet has NO manual 'Kode Order' field and every product line offers Qty, Harga, Qty Retur (produk ini), Diskon Seller (Rp/unit); auto INV code is applied on save (verified via existing INV-202609-xxx rows). Snapshot logic in entity-list.tsx save() writes costSnapshot per item so 'estimated' becomes false for new orders. (5) /more/rekomendasi-harga shows 'HPP … · target margin 25%' per product and per channel 'rekom … · aktual …' (e.g. Kopi Arabika Shopee rekom Rp85.448 · aktual Rp89.000) without mutating harga aktual. (6) /more/produk Tambah shows 'HPP Awal / Harga Beli (per unit)' and optional 'Target Gross Margin (%)'; on Edit 'Stok Awal (setup awal saja)' is locked ('N · terkunci' with running stock helper). (7) SINGLE-SOURCE regression: Home, Analytics (Penjualan/Produk/Pelanggan/Keuangan sub-tabs), Alert, Action all load without red screen; /more/keuangan shows the new rows (HPP, Biaya channel, Packaging, Pajak 0,5%, Pengeluaran, Laba bersih Rp736.540, Margin 23%) — Laba bersih matches Profit Engine to the rupiah; /more/laporan-keuangan still loads; no NaN or blank KPI in any screen. No deprecated Expo packages encountered.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/tmp/laba.jpeg", "/tmp/bc_form.jpeg", "/tmp/order_form.jpeg", "/tmp/rekom.jpeg", "/tmp/keu.jpeg", "/tmp/home.jpeg"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "profit.ts is well-scoped (~160 lines) as the single source of truth; itemProfit prefers snapshot over live master, which guarantees historical stability — good.",
+    "calc.ts monthMetrics now delegates HPP/channelFee/tax/packaging/netProfit to profitForMonth so Home/Analytics/Reports cannot drift from Profit Engine.",
+    "entity-list.tsx save() applies channelPrice + resolveChannelCosts + movingAvgHpp snapshot when collection==='orders' so new orders lose the 'estimasi' flag as required.",
+    "Field 'allowEmptyOption' cleanly injects the 'Default (semua SKU)' option for Biaya Channel SKU picker.",
+    "Reasonable perf note only: RekomendasiHarga computes recommendedPrice per (product × channel) each render — O(P*C) ≈ 12*4 at seed scale so fine."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100%"},
+  "seed_data_creation": "None. Used existing Ummu Abdullah Shop seed (Jul-Sep 2026, 13 orders, 12 produk, 7 channel costs, 2 channel prices).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Profit Engine wiring verified. Key routes: /more/laba (kind=laba → LabaReport), /more/rekomendasi-harga, /more/biaya-channel (crud collection channelCosts), /more/harga-channel (crud channelPrices). Add-form testIDs: add-button, save-button; line editor emits Qty Retur + Diskon Seller when field has lineReturns/lineDiscount. Seed omzet Sep 2026 = Rp3.247.000; Laba bersih bisnis via engine = Rp736.540; Keuangan module now matches Profit Engine exactly."
+}

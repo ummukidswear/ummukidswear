@@ -1,0 +1,56 @@
+{
+  "summary": "Frontend-only verification of two changes: (1) Biaya Channel default components order + Biaya Pesanan Rp/order behavior; (2) Tren Nilai Produk zeroing after full Reset Data. Both verified working end-to-end via the Expo web preview.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/ui/bc_form.jpg",
+    "/app/test_reports/ui/bc_home.jpg",
+    "/app/test_reports/ui/reset_done.jpg",
+    "/app/test_reports/ui/produk_after_reset.jpg"
+  ],
+  "verification_results": {
+    "biaya_channel_default_components": {
+      "order_in_ui": ["Administrasi", "Gratis Ongkir XTRA", "Promo XTRA", "Biaya Pesanan", "PPh", "Packaging"],
+      "expected_order": ["Administrasi", "Gratis Ongkir XTRA", "Promo XTRA", "Biaya Pesanan", "PPh", "Packaging"],
+      "match": true,
+      "types_visual": "First 3 = %, Biaya Pesanan = Rp, PPh = %, Packaging = Rp (confirmed via screenshot; Rp/% pill highlighting matches)",
+      "biaya_pesanan_type_toggle": "Toggle between Rp and % works (verified by clicking cc-comp-type-3-percent and cc-comp-type-3-rp; UI highlight updates)",
+      "unit_hints": {"Biaya Pesanan": "Rp / order (verified)", "Packaging": "Rp / item (verified)"},
+      "add_component_button": "cc-add-component adds a new empty row (verified: row index 6 appears after click)",
+      "scope_controls": "cc-scope-all and cc-scope-sku both present (Global / SKU Tertentu)",
+      "basis_effective_date_status": "Basis Perhitungan appears when % component present, Tanggal Berlaku (DateField) and Status (SelectField) render as expected"
+    },
+    "reset_and_tren_nilai_produk": {
+      "reset_flow": "reset-select-all -> reset-data-button -> confirm-button (ConfirmSheet) -> reset-data-done visible",
+      "produk_trend_after_reset": {
+        "labels": ["Apr '26", "Mei '26", "Jun '26", "Jul '26", "Agu '26", "Sep '26"],
+        "values": ["0Jt", "0Jt", "0Jt", "0Jt", "0Jt", "0Jt"],
+        "all_zero": true
+      },
+      "code_review_of_calc_ts": "stockOf now returns 0 when monthKey < firstStockMonth(data). firstStockMonth computes earliest month across purchases/adjustments/orders or falls back to latestMonthKey when no movements exist. After a full reset there are no movements, so firstStockMonth == latestMonthKey (=today month) and every trailing month before it is strictly less -> zeroed. Current/latest data month is >= firstStockMonth so it is NOT zeroed. Seed data (2025-10..2026-09) is unaffected because trailing 6 months from Sep '26 (Apr..Sep '26) are all >= earliest activity month.",
+      "assertions_met": {
+        "months_before_first_activity_are_zero": true,
+        "latest_data_month_preserved": true,
+        "seed_case_unaffected": true,
+        "full_reset_all_trend_points_zero": true
+      }
+    }
+  },
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Non-blocking: existing 'Require cycle: src/data/store.tsx -> src/hooks/useAnalyticsMonth.ts -> src/data/store.tsx' warning in console. Not caused by this change; consider refactoring the cycle in a future pass.",
+    "biaya-channel.tsx is a single-file 148-line module: fine for size, dense one-liners are readable enough; no refactor needed for this change."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "N/A (frontend only)", "frontend": "100%" },
+  "seed_data_creation": "None. Used existing seeded state, then exercised Reset Data (all modules) which is the specific flow under test.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "State is client-side (AsyncStorage key bos.data.v2). After running these tests the app data was fully reset in the preview browser context; open in a fresh browser/incognito to see seeded data again. Key testIDs used: cc-comp-name-<i>, cc-comp-type-<i>-rp|percent, cc-comp-value-<i>, cc-add-component, cc-scope-all/sku, reset-select-all, reset-data-button, confirm-button, reset-data-done, tren-nilai-produk-card.",
+  "rca_of_issue": "Original bug: stockOf treated openingStock as retroactive stock for all months, so months before the earliest activity month showed non-zero stock value even after Reset Data. Fix in src/data/calc.ts: stockOf returns 0 when monthKey < firstStockMonth(data); firstStockMonth = earliest month across purchases/adjustments/orders, falling back to latestMonthKey. This ensures a full reset yields firstStockMonth == current month, so all earlier trailing months = 0, while the latest month still uses openingStock + purchases + adjustments - sales for products that exist."
+}

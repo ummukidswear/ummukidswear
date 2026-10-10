@@ -1,0 +1,61 @@
+{
+  "summary": "Frontend-only re-test of refined Reset Data feature. Verified the exact behavior change from iteration 5: audit log is now PRESERVED (reset entry prepended to existing entries via audit() helper) and actionStatus is preserved. Seeded 3 fake audit entries + 2 actionStatus keys via localStorage, reloaded so provider re-hydrates, then executed the full flow: More > Sistem > Reset Data (testID more-reset-data) → 'Reset Semua Data' (reset-data-button) → ConfirmSheet Reset (confirm-button) → 'reset-data-done' success text. All ten operational collections (orders, products, adjustments, purchases, suppliers, customers, channels, expenses, accounts, targets) confirmed empty in localStorage 'bos.data.v1'. Audit array length = 4 post-reset: [0] Reset entry ('Reset · Reset data operasional ke kondisi kosong', entity 'data operasional') prepended, [1..3] all three pre-seeded entries (aud-pre-1/2/3) preserved intact. actionStatus preserved unchanged ({act-1:done, act-2:open}). Business config all preserved: rules=8, params=6 keys, thresholds=8 keys, settings.shopName='Ummu Abdullah Shop', notifyAlert/notifyDailySummary/notifyWeeklyReport intact. Post-reset navigation across 12 screens (Home, Alert, Action, Analytics x4 sub-tabs, Laporan Penjualan/Keuangan/Stok, Audit Log) — NO red screen, no error boundary, no console errors, and the prior 'Received NaN for strokeDashoffset' warning is now gone thanks to the guard in analytics-charts.tsx:141. However, a visible-UI 'NaN%' bug remains in the legend/region/channel percent labels across index.tsx, produk.tsx and penjualan.tsx (see ui_bugs). The core Reset Data feature is functioning per spec; the NaN% text is a downstream display defect that surfaces only on empty data.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "Analytics > Pelanggan · Segmentasi Pelanggan (legendPercent)",
+        "issue": "After Reset, analytics.segmentsTotal=0 and segmentPercent() in app/index.tsx line 88 evaluates ((count/0)*100).toFixed(1) => literal string 'NaN' rendered as 'NaN%' next to every segment (Loyal/Berulang/Baru/Pasif/Tidak Aktif). Fix: guard `analytics.segmentsTotal > 0 ? ... : '0,0'` (or return '—').",
+        "testID": "segment-loyal",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Analytics > Pelanggan · Sebaran Pelanggan (regionPercent)",
+        "issue": "app/index.tsx line 100: `Math.round((region.count / analytics.segmentsTotal) * 100)` returns NaN when segmentsTotal=0, rendered as 'NaN%' for every region (Makassar, Maros, Gowa, Bone, Parepare, Pangkep, Takalar, Lainnya). Same guard needed.",
+        "testID": "region-makassar",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Analytics > Produk · Ketersediaan & Perputaran Produk",
+        "issue": "app/produk.tsx lines 83-84: availabilityPercent() and turnoverPercent() divide by product.availabilityTotal / product.turnoverTotal which are 0 when products is empty, producing 'NaN%' next to Normal/Hampir Habis/Habis and Fast Moving/Slow Moving/Dead Stock rows.",
+        "testID": "availability-normal",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "Analytics > Penjualan · Omzet per channel (channelPercent)",
+        "issue": "app/penjualan.tsx line 128: `Math.round((channel.omzet / sales.channelTotal) * 100)` returns NaN when channelTotal=0. Would render 'NaN%' when there are channels with 0 omzet (currently channels list itself is empty after reset, so not visually reachable via Reset — but same defect will trigger any time channelTotal=0 with at least one channel).",
+        "testID": "n/a",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/ui/reset_done2.jpg",
+    "/app/test_reports/ui/final_analytics_pelanggan.jpg",
+    "/app/test_reports/ui/final_analytics_produk.jpg",
+    "/app/test_reports/ui/final_analytics_penjualan.jpg",
+    "/app/test_reports/ui/final_lap-penjualan.jpg",
+    "/app/test_reports/ui/final_home.jpg",
+    "/app/test_reports/ui/final_alert.jpg",
+    "/app/test_reports/ui/final_audit.jpg"
+  ],
+  "action_items": [
+    "Guard the percentage formatters that divide by *Total totals so they don't emit 'NaN%' when the denominator is 0. Files: app/index.tsx (segmentPercent line 88; region percent line 100), app/produk.tsx (availabilityPercent line 83, turnoverPercent line 84), app/penjualan.tsx (channel percent line 128). Suggested pattern: `const pct = total > 0 ? Math.round((count / total) * 100) : 0;` (or return '—' when total===0)."
+  ],
+  "critical_code_review_comments": [
+    "store.tsx resetData() (lines 93-101) correctly clears exactly the ten operational collections and prepends a single Reset audit entry via audit() helper — this matches the PRD delta (previously the whole audit was replaced and actionStatus wiped).",
+    "actionStatus is now correctly preserved through resetData() — verified via localStorage before/after inspection.",
+    "SegmentDonut NaN guard at analytics-charts.tsx:141 works (no strokeDashoffset console errors post-reset), but sibling legend labels in index.tsx/produk.tsx/penjualan.tsx were NOT similarly guarded and still emit 'NaN%' text.",
+    "audit() slices to 200 entries — preserved entries + reset entry safely fit; no risk of overflow from a single reset."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "90%"},
+  "seed_data_creation": "Injected 3 synthetic audit entries (aud-pre-1/2/3) and 2 actionStatus keys via page.evaluate on localStorage before performing the reset, so that audit-preservation could be verified with a NON-empty starting audit array (fresh seed starts with audit=[]).",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Reset Data feature meets spec: preserves audit log (prepends single Reset entry), preserves actionStatus, preserves params/thresholds/rules/settings/notifikasi, clears only the ten operational collections. Because fresh seed has audit=[], you MUST inject synthetic audit entries via localStorage before reset to properly verify the preservation-vs-replace behavior. The strokeDashoffset NaN in SegmentDonut is fixed, but visible 'NaN%' text in Analytics legends/regions/channels remains and needs guarding in app/index.tsx, app/produk.tsx and app/penjualan.tsx.",
+  "rca_of_issue": "Visible NaN% text after reset: pctformatters in app/index.tsx (segmentPercent line 88, region percent line 100), app/produk.tsx (availability/turnover Percent lines 83-84) and app/penjualan.tsx (channel percent line 128) all compute count/total (or omzet/total) and toFixed/round it without checking total>0. After Reset Data, these totals become 0 → 0/0 = NaN → rendered as 'NaN%' next to each row. Reproduction: Reset Data → open Analytics tab → Pelanggan / Produk. Mitigation: add `total > 0 ? formula : 0` guard around each percent computation."
+}

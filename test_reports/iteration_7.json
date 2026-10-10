@@ -1,0 +1,31 @@
+{
+  "summary": "Frontend-only testing of the Reset Data checklist feature in the 'Ummu Abdullah Shop' Expo app. Navigated More > SISTEM > Reset Data via nav-more + more-reset-data. Verified all 10 checklist rows (reset-select-orders/products/adjustments/purchases/suppliers/customers/channels/expenses/accounts/targets) are present and all UNCHECKED by default (aria-checked=false, screenshot confirms empty checkbox icons). Excluded modules (Parameter, Threshold, Business Rules, Laporan, Import, Data Quality, Backup, Pengaturan, Notifikasi, Audit Log) are NOT rendered in the checklist. Reset button (reset-data-button) is disabled when nothing is selected (aria-disabled=true, label 'Pilih modul untuk direset'); tapping it does NOT open the confirm sheet (confirm-button count=0). After selecting Order + Pelanggan the label becomes 'Reset 2 Modul Terpilih' and tapping opens ConfirmSheet with title 'Reset data terpilih?' and confirm-button. After confirming: localStorage bos.data.v1 shows orders=[] and customers=[] while products=12, adjustments=1, purchases=3, suppliers=4, channels=4, expenses=7, accounts=3, targets=3, rules=8 are UNCHANGED. Params, thresholds and settings (shopName='Ummu Abdullah Shop') are byte-identical to pre-reset. Audit log is preserved and a new entry 'Reset · data operasional · Reset data (2 modul)' was appended (not wiped). reset-data-done success text is displayed. Post-reset, Home, Analytics (Penjualan/Produk/Pelanggan/Keuangan sub-tabs), Alert, Action, More and all three Laporan screens render without any 'NaN%' text and with ZERO console errors — Segmentasi Pelanggan donut and Sebaran regions show 0/0,0% cleanly, no 'Received NaN for strokeDashoffset' error. All selectable modules including Order remain openable from More after reset.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/ui/reset_screen.jpeg",
+    "/app/test_reports/ui/confirm_sheet.jpeg",
+    "/app/test_reports/ui/after_reset.jpeg",
+    "/app/test_reports/ui/analytics_after.jpeg",
+    "/app/test_reports/ui/an_Pelanggan.jpeg",
+    "/app/test_reports/ui/an_Produk.jpeg"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ResetData component (more/[slug].tsx L231-252) is clean, uses testIDs consistently and disables the reset button when chosen.length===0. resetData in store.tsx L92-98 correctly guards against empty collections and preserves audit/params/thresholds/settings.",
+    "No deprecated Expo packages (expo-av, expo-barcode-scanner, expo-background-fetch) detected in the touched files.",
+    "All text is wrapped in <Text>, all interactive rows use Pressable with accessibilityRole='checkbox' and accessibilityState.checked — good a11y."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100%"},
+  "seed_data_creation": "Used the default seeded data injected by createSeedData(); no custom seed authored. Between the two runs localStorage was mutated to simulate a post-reset state to verify recalculation paths.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The Reset Data feature is fully working end-to-end. Playwright can drive the flow via: nav-more -> more-reset-data -> reset-select-<key> -> reset-data-button -> confirm-button and verify localStorage['bos.data.v1']. Each Playwright session starts with freshly seeded data (createSeedData). If retesting, remember to check for both 'NaN%' text and console error 'Received NaN for strokeDashoffset' on Analytics > Pelanggan / Produk / Penjualan after emptying customers and orders.",
+  "rca_of_issue": "No bugs found. All 5 test scenarios in the review request pass."
+}
