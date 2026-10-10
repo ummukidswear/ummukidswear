@@ -33,7 +33,7 @@ const useStyles = makeStyles((palette) => ({
   topIcon: { width: 34, height: 34, borderRadius: 11, backgroundColor: palette.surfaceSecondary, borderWidth: 1, borderColor: palette.borderSoft, alignItems: "center", justifyContent: "center" },
   badge: { position: "absolute", top: -4, right: -4, minWidth: 15, height: 15, borderRadius: 8, backgroundColor: palette.error, alignItems: "center", justifyContent: "center", paddingHorizontal: 3 },
   badgeText: { color: palette.onError, fontSize: 8, fontWeight: "800" },
-  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 7, paddingBottom: 22 },
+  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 7, paddingBottom: 25 },
   sectionGap: { marginTop: 12 },
   sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   sectionTitle: { color: palette.onSurface, fontSize: 13, fontFamily: fontSansHeavy, letterSpacing: -0.1 },
@@ -45,9 +45,9 @@ const useStyles = makeStyles((palette) => ({
   // kartu tetap sama seperti sebelumnya.
   scoreBody: { flexDirection: "row", alignItems: "center", marginTop: 4 },
   scoreSide: { width: 100, alignItems: "center" },
-  ringWrap: { width: 85, height: 85, alignItems: "center", justifyContent: "center" },
+  ringWrap: { width: 82, height: 82, alignItems: "center", justifyContent: "center" },
   ringScore: { color: palette.brandPrimary, fontSize: 26, lineHeight: 28, fontFamily: fontSansHeavy, letterSpacing: -0.5 },
-  ringStatus: { color: palette.onSurface, fontSize: 9, lineHeight: 11, fontFamily: fontSans, marginTop: 1, letterSpacing: -0.2 },
+  ringStatus: { color: palette.onSurface, fontSize: 5, lineHeight: 7, fontFamily: fontSans, marginTop: 1, letterSpacing: -0.1 },
   factorList: { flex: 1, marginLeft: 12, gap: 4 },
   factorRow: { flexDirection: "row", alignItems: "center" },
   factorLabel: { width: 92, color: palette.onSurfaceSecondary, fontSize: 9.5 },
@@ -118,8 +118,8 @@ const insightCategory = (tone: "brand" | "success" | "warning" | "error"): { lab
 // Urutan kartu KPI 2 x 4 sesuai referensi; nilai & tren tetap dari homeSummary.
 const kpiOrder = ["kas", "omzet", "laba", "order", "qty", "aov", "pelanggan", "stok"];
 
-// Ring Skor Kesehatan: diameter 85dp + stroke 7dp — dimensi kartu tetap terjaga.
-const ringSize = 85; const ringStroke = 7; const ringRadius = (ringSize - ringStroke) / 2; const ringCircumference = 2 * Math.PI * ringRadius;
+// Ring Skor Kesehatan: diameter 82dp + stroke 7dp — dimensi kartu tetap terjaga.
+const ringSize = 82; const ringStroke = 7; const ringRadius = (ringSize - ringStroke) / 2; const ringCircumference = 2 * Math.PI * ringRadius;
 
 function KpiTile({ styles, colors: palette, kpi, onPress }: { styles: Styles; colors: ThemeColors; kpi: Kpi; onPress: () => void }) {
   const good = kpi.trend.direction === "flat" ? null : (kpi.trend.direction === "up") === kpi.positiveWhenUp;

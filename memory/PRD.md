@@ -41,3 +41,8 @@ Import project dari GitHub `monevbbihpmm-svg/ummu-abdullah-bos` branch `main6`, 
 - [x] Font status "Sangat Sehat" 12→9sp (lineHeight 11)
 - [x] Tinggi card tetap 136px (paddingBottom 20→22 kompensasi ring)
 - Terverifikasi: cardH 136, ringW 85, statusFont 9px, titleGap ~7dp
+
+## Update 10 Okt 2026 (4) — Ring 82dp & font status 5sp
+- [x] Ring 85→82dp; font status 9→5sp (tetap putih, di dalam lingkaran)
+- [x] Tinggi card tetap 136px (paddingBottom 22→25)
+- Terverifikasi: ringW 82, statusFont 5px, margin 25.6px/sisi dalam ring, cardH 136
