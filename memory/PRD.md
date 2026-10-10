@@ -46,3 +46,8 @@ Import project dari GitHub `monevbbihpmm-svg/ummu-abdullah-bos` branch `main6`, 
 - [x] Ring 85→82dp; font status 9→5sp (tetap putih, di dalam lingkaran)
 - [x] Tinggi card tetap 136px (paddingBottom 22→25)
 - Terverifikasi: ringW 82, statusFont 5px, margin 25.6px/sisi dalam ring, cardH 136
+
+## Update 10 Okt 2026 (5) — Posisi ring & font status 7sp
+- [x] Ring diturunkan: scoreBody marginTop 4→16, paddingBottom 25→13 (proporsional, tinggi card tetap 136)
+- [x] Font status 5→7sp (tetap putih)
+- Terverifikasi: gap judul→ring 16px, gap ring→bawah card 14px, statusFont 7px, cardH 136
