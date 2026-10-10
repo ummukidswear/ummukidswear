@@ -35,3 +35,9 @@ Import project dari GitHub `monevbbihpmm-svg/ummu-abdullah-bos` branch `main6`, 
 ## Update 10 Okt 2026 (2) — Padding judul card Skor Kesehatan
 - [x] paddingTop card 16→7 (judul ~7dp dari tepi atas), paddingBottom 11→20 agar tinggi card tetap 136px
 - Terverifikasi: titleGap 8px, cardH 136
+
+## Update 10 Okt 2026 (3) — Ring & font status card Skor Kesehatan
+- [x] Ring diperkecil 87→85dp (ringSize + ringWrap)
+- [x] Font status "Sangat Sehat" 12→9sp (lineHeight 11)
+- [x] Tinggi card tetap 136px (paddingBottom 20→22 kompensasi ring)
+- Terverifikasi: cardH 136, ringW 85, statusFont 9px, titleGap ~7dp
