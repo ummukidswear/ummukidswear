@@ -33,7 +33,7 @@ const useStyles = makeStyles((palette) => ({
   topIcon: { width: 34, height: 34, borderRadius: 11, backgroundColor: palette.surfaceSecondary, borderWidth: 1, borderColor: palette.borderSoft, alignItems: "center", justifyContent: "center" },
   badge: { position: "absolute", top: -4, right: -4, minWidth: 15, height: 15, borderRadius: 8, backgroundColor: palette.error, alignItems: "center", justifyContent: "center", paddingHorizontal: 3 },
   badgeText: { color: palette.onError, fontSize: 8, fontWeight: "800" },
-  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 16, paddingBottom: 11 },
+  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 7, paddingBottom: 20 },
   sectionGap: { marginTop: 12 },
   sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   sectionTitle: { color: palette.onSurface, fontSize: 13, fontFamily: fontSansHeavy, letterSpacing: -0.1 },

@@ -31,3 +31,7 @@ Import project dari GitHub `monevbbihpmm-svg/ummu-abdullah-bos` branch `main6`, 
 - [x] 5 progress bar indikator seragam pink BOS (#FF5C93) — factorTone/statusVisual dihapus
 - [x] Label status (Sangat Sehat/dll) putih (onSurface #F0F4F8), 12sp, tepat di bawah angka skor, tetap di dalam lingkaran 87dp
 - Terverifikasi: cardH 136, titleGap 17px, bars 5x rgb(255,92,147), status 12px putih, margin 6.3px per sisi dalam ring
+
+## Update 10 Okt 2026 (2) — Padding judul card Skor Kesehatan
+- [x] paddingTop card 16→7 (judul ~7dp dari tepi atas), paddingBottom 11→20 agar tinggi card tetap 136px
+- Terverifikasi: titleGap 8px, cardH 136
