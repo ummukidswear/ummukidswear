@@ -33,7 +33,7 @@ const useStyles = makeStyles((palette) => ({
   topIcon: { width: 34, height: 34, borderRadius: 11, backgroundColor: palette.surfaceSecondary, borderWidth: 1, borderColor: palette.borderSoft, alignItems: "center", justifyContent: "center" },
   badge: { position: "absolute", top: -4, right: -4, minWidth: 15, height: 15, borderRadius: 8, backgroundColor: palette.error, alignItems: "center", justifyContent: "center", paddingHorizontal: 3 },
   badgeText: { color: palette.onError, fontSize: 8, fontWeight: "800" },
-  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 9, paddingBottom: 18 },
+  card: { backgroundColor: palette.surfaceSecondary, borderRadius: 14, borderWidth: 1, borderColor: palette.borderSoft, paddingHorizontal: 10, paddingTop: 16, paddingBottom: 11 },
   sectionGap: { marginTop: 12 },
   sectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   sectionTitle: { color: palette.onSurface, fontSize: 13, fontFamily: fontSansHeavy, letterSpacing: -0.1 },
@@ -47,7 +47,7 @@ const useStyles = makeStyles((palette) => ({
   scoreSide: { width: 100, alignItems: "center" },
   ringWrap: { width: 87, height: 87, alignItems: "center", justifyContent: "center" },
   ringScore: { color: palette.brandPrimary, fontSize: 26, lineHeight: 28, fontFamily: fontSansHeavy, letterSpacing: -0.5 },
-  ringStatus: { fontSize: 9, lineHeight: 11, fontFamily: fontSans, marginTop: 0 },
+  ringStatus: { color: palette.onSurface, fontSize: 12, lineHeight: 15, fontFamily: fontSans, marginTop: 1, letterSpacing: -0.3 },
   factorList: { flex: 1, marginLeft: 12, gap: 4 },
   factorRow: { flexDirection: "row", alignItems: "center" },
   factorLabel: { width: 92, color: palette.onSurfaceSecondary, fontSize: 9.5 },
@@ -149,15 +149,8 @@ export default function Home() {
   const { data, months, selectedMonth, setSelectedMonth } = useAnalyticsMonth("home"); const [isPickerOpen, setPickerOpen] = useState(false);
   const summary = useMemo(() => homeSummary(data, selectedMonth), [data, selectedMonth]);
   const alertCount = useMemo(() => evaluateAlerts(data, latestMonthKey(data)).length, [data]);
-  // Angka skor memakai aksen pink BOS; status arah memakai warna semantik (hijau
-  // positif, kuning peringatan, merah kritis). Bar indikator: sehat = Primary Pink,
-  // peringatan/kritis tetap semantik (Repeat Rate rendah tetap merah).
-  const factorTone = (score: number) => (score >= 70 ? palette.brandPrimary : score >= 50 ? palette.warning : palette.error);
-  const statusVisual = summary.status.tone === "success"
-    ? { color: palette.success, icon: "arrow-top-right" as IconName }
-    : summary.status.tone === "warning"
-      ? { color: palette.warning, icon: "alert-outline" as IconName }
-      : { color: palette.error, icon: "alert-octagon-outline" as IconName };
+  // Angka skor memakai aksen pink BOS; label status di bawahnya putih. Seluruh
+  // bar indikator memakai Primary Pink BOS yang sama, tanpa warna semantik.
   const orderedKpis = kpiOrder.map((key) => summary.kpis.find((kpi) => kpi.key === key)).filter((kpi): kpi is Kpi => !!kpi);
 
   return <View style={styles.root}><ThemedStatusBar />
@@ -180,12 +173,12 @@ export default function Home() {
                 <Circle cx={ringSize / 2} cy={ringSize / 2} r={ringRadius} stroke={palette.brandPrimary} strokeWidth={ringStroke} fill="none" strokeDasharray={`${ringCircumference} ${ringCircumference}`} strokeDashoffset={ringCircumference * (1 - Math.min(summary.score, 100) / 100)} strokeLinecap="round" transform={`rotate(-90 ${ringSize / 2} ${ringSize / 2})`} />
               </Svg>
               <Text style={styles.ringScore}>{summary.score}</Text>
-              <Text numberOfLines={1} style={[styles.ringStatus, { color: statusVisual.color }]}>{summary.status.label}</Text>
+              <Text numberOfLines={1} style={styles.ringStatus}>{summary.status.label}</Text>
             </View>
           </View>
           <View style={styles.factorList}>{summary.factors.map((factor) => <Pressable testID={`factor-${factor.label.toLowerCase().replaceAll(" ", "-")}`} key={factor.label} accessibilityRole="button" onPress={() => { const target = homeFactorDetail(factor.label); if (target.type) router.push({ pathname: "/detail", params: { type: target.type, value: target.value, month: selectedMonth } }); }} style={({ pressed }) => [styles.factorRow, pressed && { backgroundColor: palette.brandSecondary, borderRadius: 6 }]}>
             <Text numberOfLines={1} style={styles.factorLabel}>{factor.label}</Text>
-            <View style={styles.factorTrack}><View style={[styles.factorFill, { width: `${factor.score}%`, backgroundColor: factorTone(factor.score) }]} /></View>
+            <View style={styles.factorTrack}><View style={[styles.factorFill, { width: `${factor.score}%`, backgroundColor: palette.brandPrimary }]} /></View>
             <Text style={styles.factorScore}>{factor.score}</Text>
           </Pressable>)}</View>
         </View>

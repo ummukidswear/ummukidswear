@@ -25,3 +25,9 @@ Import project dari GitHub `monevbbihpmm-svg/ummu-abdullah-bos` branch `main6`, 
 - P0: — (setup selesai)
 - P1: implementasi backend bisnis bila app perlu sinkronisasi data ke server
 - P2: docker-compose backend+mongo (opsional, ditawarkan user di runbook)
+
+## Update 10 Okt 2026 — Card Skor Kesehatan Bisnis (app/home.tsx)
+- [x] Padding atas card 9→16 (judul ~16dp dari tepi atas), paddingBottom 18→11 agar tinggi card tetap 136px
+- [x] 5 progress bar indikator seragam pink BOS (#FF5C93) — factorTone/statusVisual dihapus
+- [x] Label status (Sangat Sehat/dll) putih (onSurface #F0F4F8), 12sp, tepat di bawah angka skor, tetap di dalam lingkaran 87dp
+- Terverifikasi: cardH 136, titleGap 17px, bars 5x rgb(255,92,147), status 12px putih, margin 6.3px per sisi dalam ring
